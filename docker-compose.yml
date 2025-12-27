@@ -1,0 +1,21 @@
+services:
+  # Service 1: Local EVM Node
+  blockchain:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8545:8545" # Expose RPC port to host
+    command: npx hardhat node
+
+  # Service 2: Deployer
+  deployer:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - blockchain
+    environment:
+      - HARDHAT_NETWORK=localhost
+    # This container will run the entrypoint.sh script we made in Step 4
